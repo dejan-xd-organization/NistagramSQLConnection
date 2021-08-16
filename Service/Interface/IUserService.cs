@@ -10,5 +10,6 @@ namespace NistagramSQLConnection.Service.Interface
     public interface IUserService
     {
         List<User> FindUser(long id, string username, string email);
+        User LoginUser(string username, string password);
     }
 }
