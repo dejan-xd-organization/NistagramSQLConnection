@@ -6,16 +6,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["./NistagramBackend/NistagramBackend.csproj", "NistagramBackend/"]
-RUN dotnet restore "NistagramBackend/NistagramBackend.csproj"
+COPY ["./NistagramSQLConnection.csproj", "NistagramSQLConnection/"]
+RUN dotnet restore "NistagramSQLConnection.csproj"
 COPY . .
-WORKDIR "/src/NistagramBackend"
-RUN dotnet build "NistagramBackend.csproj" -c Release -o /app/build
+WORKDIR "/src"
+RUN dotnet build "NistagramSQLConnection.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NistagramBackend.csproj" -c Release -o /app/publish
+RUN dotnet publish "NistagramSQLConnection.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NistagramBackend.dll"]
+ENTRYPOINT ["dotnet", "NistagramSQLConnection.dll"]
