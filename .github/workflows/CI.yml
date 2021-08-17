@@ -70,6 +70,7 @@ jobs:
           dotnet build NistagramSQLConnection.csproj --configuration release
           dotnet test NistagramSQLConnection.csproj --configuration release
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          
   Artifact:
     runs-on: ubuntu-latest
     steps:
@@ -149,18 +150,18 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Build image
         run: |
-          docker build -t utils:latest -<<EOF
+          docker build -t sql:latest -<<EOF
           FROM busybox
           RUN touch abc.txt
           EOF
       - name: Upload image
         uses: ishworkh/docker-image-artifact-upload@v1
         with:
-          image: "utils:latest"
+          image: "sql:latest"
       - name: Download image
         uses: ishworkh/docker-image-artifact-download@v1
         with:
-          image: "utils:latest"
+          image: "sql:latest"
           
   Docker:
     runs-on: ubuntu-latest
@@ -185,7 +186,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ secrets.DOCKER_HUB_USERNAME }}/utils
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/sql
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -196,6 +197,6 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/utils:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sql:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
