@@ -46,5 +46,17 @@ namespace NistagramSQLConnection.Model
 
         }
 
+        public User(string firstName, string lastName, string username, string email, string sex, DateTime dateOfBirth, DateTime dateOfRegistration)
+        {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.username = username;
+            this.email = email;
+            this.sex = sex;
+            this.dateOfBirth = dateOfBirth;
+            this.dateOfRegistration = dateOfRegistration;
+
+        }
+
     }
 }
