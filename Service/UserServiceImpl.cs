@@ -34,7 +34,7 @@ namespace NistagramSQLConnection.Service
 
         public User LoginUser(string username, string password)
         {
-            if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 return null;
             }
@@ -52,9 +52,28 @@ namespace NistagramSQLConnection.Service
             }
         }
 
+        public bool RegistrationUser(string firstName, string lastName, string username, string email,
+            string password, string sex, DateTime dateOfBirth, DateTime dateOfRegistration)
+        {
+            User user = new User(firstName, lastName, username, email, sex, dateOfBirth, dateOfRegistration);
+            user.password = encoder.Encode(password);
+            try
+            {
+                _db.Users.Add(user);
+                _db.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         private List<User> FindAll()
         {
             return _db.Users.OrderBy(i => i.username).ToList();
         }
+
+
     }
 }
