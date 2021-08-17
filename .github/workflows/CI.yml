@@ -10,6 +10,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  MySQL:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '8.0'
+      - run: mysql -uroot -h127.0.0.1 -e 8.0
+      
+      
   Dotnet:
     runs-on: ubuntu-latest
     steps:
