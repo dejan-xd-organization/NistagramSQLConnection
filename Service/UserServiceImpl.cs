@@ -52,18 +52,17 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public bool RegistrationUser(string firstName, string lastName, string username, string email,
-            string password, string sex, DateTime dateOfBirth, DateTime dateOfRegistration)
+        public bool RegistrationUser(User u)
         {
-            User user = new User(firstName, lastName, username, email, sex, dateOfBirth, dateOfRegistration);
-            user.password = encoder.Encode(password);
+            User user = new User(u.firstName, u.lastName, u.username, u.email, u.sex, u.dateOfBirth, u.dateOfRegistration);
+            user.password = encoder.Encode(u.password);
             try
             {
                 _db.Users.Add(user);
                 _db.SaveChanges();
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
@@ -74,6 +73,19 @@ namespace NistagramSQLConnection.Service
             return _db.Users.OrderBy(i => i.username).ToList();
         }
 
+        public List<User> FilterUser(string filter)
+        {
+            try
+            {
+                return _db.Users.Where(x => x.firstName.Contains(filter) || x.lastName.Contains(filter)
+                || x.email.Contains(filter) || x.username.Contains(filter)).ToList();
+            }
+            catch
+            {
+                return new List<User>(0);
+            }
+
+        }
 
     }
 }
