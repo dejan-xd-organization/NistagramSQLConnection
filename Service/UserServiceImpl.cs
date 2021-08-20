@@ -84,8 +84,20 @@ namespace NistagramSQLConnection.Service
             {
                 return new List<User>(0);
             }
-
         }
+
+        public List<User> FindNewUsers()
+        {
+            try
+            {
+                return _db.Users.OrderBy(x => x.dateOfRegistration).Skip(Math.Max(0, _db.Users.Count() - 2)).ToList();
+            }
+            catch
+            {
+                return new List<User>(0);
+            }
+        }
+
 
     }
 }

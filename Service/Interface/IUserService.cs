@@ -13,6 +13,7 @@ namespace NistagramSQLConnection.Service.Interface
         User LoginUser(string username, string password);
         bool RegistrationUser(User user);
         List<User> FilterUser(string filter);
+        List<User> FindNewUsers();
 
     }
 }
