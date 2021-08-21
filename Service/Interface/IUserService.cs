@@ -14,6 +14,6 @@ namespace NistagramSQLConnection.Service.Interface
         bool RegistrationUser(User user);
         List<User> FilterUser(string filter);
         List<User> FindNewUsers();
-
+        User FindUserById(long id, bool isOnline);
     }
 }

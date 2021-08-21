@@ -13,22 +13,47 @@ namespace NistagramSQLConnection.Model
     {
         [Key]
         public long id { get; set; }
+
+        [Required]
         public string firstName { get; set; }
+
+        [Required]
         public string lastName { get; set; }
+
+        [Required]
         public string username { get; set; }
+
+        [Required]
         public string email { get; set; }
+
+        [Required]
         public string password { get; set; }
+
         public string profileImg { get; set; }
+
         public string sex { get; set; }
+
+        [ForeignKey("addressId")]
         public Address address { get; set; }
+
         public string relationship { get; set; }
-        public DateTime dateOfBirth { get; set; }
+
+        public DateTime? dateOfBirth { get; set; }
+
         public DateTime dateOfRegistration { get; set; }
+
+        public bool isPublicProfile { get; set; }  // is user profile public or not?
+
+        [ForeignKey("roleId")]
         public Role role { get; set; }
+
+        [ForeignKey("userId")]
+        public virtual ICollection<UserPost> userPosts { get; set; }
+
 
         public User() { }
         public User(long id, string firstName, string lastName, string username, string email, string password, string profileImg,
-             string sex, Address address, string relationship, DateTime dateOfBirth, DateTime dateOfRegistration, Role role)
+             string sex, Address address, string relationship, DateTime? dateOfBirth, DateTime dateOfRegistration, Role role)
         {
             this.id = id;
             this.firstName = firstName;
@@ -46,7 +71,7 @@ namespace NistagramSQLConnection.Model
 
         }
 
-        public User(string firstName, string lastName, string username, string email, string sex, DateTime dateOfBirth, DateTime dateOfRegistration)
+        public User(string firstName, string lastName, string username, string email, string sex, DateTime? dateOfBirth, DateTime dateOfRegistration)
         {
             this.firstName = firstName;
             this.lastName = lastName;
