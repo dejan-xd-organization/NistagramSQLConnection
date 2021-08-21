@@ -68,11 +68,6 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        private List<User> FindAll()
-        {
-            return _db.Users.OrderBy(i => i.username).ToList();
-        }
-
         public List<User> FilterUser(string filter)
         {
             try
@@ -98,6 +93,23 @@ namespace NistagramSQLConnection.Service
             }
         }
 
+        public User FindUserById(long id, bool isOnline = false)
+        {
+            try
+            {
+                return (User)_db.Users.Where(x => x.isPublicProfile == isOnline).Where(x => x.id == id);
+            }
+            catch
+            {
+                return new User();
+            }
+        }
+
+
+        private List<User> FindAll()
+        {
+            return _db.Users.OrderBy(i => i.username).ToList();
+        }
 
     }
 }
