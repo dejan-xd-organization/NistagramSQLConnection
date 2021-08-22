@@ -88,21 +88,13 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
-      #- name: Semantic Release
-      #  uses: cycjimmy/semantic-release-action@v2
-      #  with:
-      #    semantic_version: 15.13.28  # It is recommended to specify specifying version range
-      #                                # for semantic-release.
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Bump version and push tag
+      - name: Bump version and push tag (Semantic Versioning)
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           append_to_pre_release_tag: ""
-          default_bump: major    
+          default_bump: major     
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -148,14 +140,13 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@master
-      #- name: Semantic Release
-      #  uses: cycjimmy/semantic-release-action@v2
-      #  with:
-      #    semantic_version: 15.13.28  # It is recommended to specify specifying version range
-      #                                # for semantic-release.
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Bump version and push tag (Semantic Versioning)
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          append_to_pre_release_tag: ""
+          default_bump: major  
       - name: Build image
         run: |
           docker build -t sql:latest -<<EOF
@@ -182,14 +173,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      #- name: Semantic Release
-      #  uses: cycjimmy/semantic-release-action@v2
-      #  with:
-      #    semantic_version: 15.13.28  # It is recommended to specify specifying version range
-      #                                # for semantic-release.
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Bump version and push tag (Semantic Versioning)
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          append_to_pre_release_tag: ""
+          default_bump: major  
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
