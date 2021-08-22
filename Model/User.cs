@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using NistagramSQLConnection.Model;
 
 namespace NistagramSQLConnection.Model
 {
@@ -52,24 +49,6 @@ namespace NistagramSQLConnection.Model
 
 
         public User() { }
-        public User(long id, string firstName, string lastName, string username, string email, string password, string profileImg,
-             string sex, Address address, string relationship, DateTime? dateOfBirth, DateTime dateOfRegistration, Role role)
-        {
-            this.id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.username = username;
-            this.email = email;
-            this.password = password;
-            this.profileImg = profileImg;
-            this.sex = sex;
-            this.address = address;
-            this.relationship = relationship;
-            this.dateOfBirth = dateOfBirth;
-            this.dateOfRegistration = dateOfRegistration;
-            this.role = role;
-
-        }
 
         public User(string firstName, string lastName, string username, string email, string sex, DateTime? dateOfBirth, DateTime dateOfRegistration)
         {
