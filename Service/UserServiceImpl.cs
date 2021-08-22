@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NistagramSQLConnection.Data;
+﻿using NistagramSQLConnection.Data;
 using NistagramSQLConnection.Model;
 using NistagramSQLConnection.Service.Interface;
 using Scrypt;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NistagramSQLConnection.Service
 {
     public class UserServiceImpl : IUserService
     {
         private readonly DataContext _db;
-        ScryptEncoder encoder = new ScryptEncoder();
+        readonly ScryptEncoder encoder = new ScryptEncoder();
 
         public UserServiceImpl(DataContext db)
         {
             _db = db;
         }
 
-        public List<User> FindUser(long id, string username = null, string email = null)
+        public List<User> FindUser(long id, string username, string email)
         {
+            if (username == "") username = null;
+            if (email == "") email = null;
             if (id == 0 && username == null && email == null)
             {
                 return FindAll();
@@ -46,23 +45,24 @@ namespace NistagramSQLConnection.Service
                 if (!encoder.Compare(password, user.password)) return null;
                 return user;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
         }
 
-        public bool RegistrationUser(User u)
+        public bool RegistrationUser(User user)
         {
-            User user = new User(u.firstName, u.lastName, u.username, u.email, u.sex, u.dateOfBirth, u.dateOfRegistration);
-            user.password = encoder.Encode(u.password);
+            User newUser = new User(user.firstName, user.lastName, user.username, user.email, user.sex, user.dateOfBirth,
+                                    user.dateOfRegistration);
+            newUser.password = encoder.Encode(user.password);
             try
             {
-                _db.Users.Add(user);
+                _db.Users.Add(newUser);
                 _db.SaveChanges();
                 return true;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -85,7 +85,7 @@ namespace NistagramSQLConnection.Service
         {
             try
             {
-                return _db.Users.OrderBy(x => x.dateOfRegistration).Skip(Math.Max(0, _db.Users.Count() - 2)).ToList();
+                return _db.Users.OrderByDescending(x => x.dateOfRegistration).Take(5).ToList();
             }
             catch
             {
@@ -93,10 +93,11 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public User FindUserById(long id, bool isOnline = false)
+        public User FindUserById(long id, bool isOnline)
         {
             try
             {
+                if (isOnline != true) isOnline = false;
                 return (User)_db.Users.Where(x => x.isPublicProfile == isOnline).Where(x => x.id == id);
             }
             catch

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NistagramSQLConnection.Model;
 
 namespace NistagramSQLConnection.Data
@@ -21,22 +17,22 @@ namespace NistagramSQLConnection.Data
 
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.Entity<User>()
+            modelBuilder.Entity<User>()
                 .HasIndex(u => new { u.email, u.username })
                 .IsUnique();
 
-            builder.Entity<UserPost>()
+            modelBuilder.Entity<UserPost>()
                 .HasKey(up => new { up.postId, up.userId });
 
-            builder.Entity<PostComment>()
+            modelBuilder.Entity<PostComment>()
                 .HasKey(pm => new { pm.postId, pm.commentId });
 
-            builder.Entity<PostReaction>()
+            modelBuilder.Entity<PostReaction>()
                 .HasKey(pr => new { pr.postId, pr.reactionId });
 
-            base.OnModelCreating(builder);
+            base.OnModelCreating(modelBuilder);
         }
 
     }

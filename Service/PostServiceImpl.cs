@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NistagramSQLConnection.Data;
+﻿using NistagramSQLConnection.Data;
 using NistagramSQLConnection.Model;
 using NistagramSQLConnection.Service.Interface;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NistagramSQLConnection.Service
 {
@@ -19,13 +16,14 @@ namespace NistagramSQLConnection.Service
             _db = db;
         }
 
-        public List<WallPost> GetAllWallPosts(bool isPublic = false)
+        public List<WallPost> GetAllWallPosts(bool isPublic)
         {
             try
             {
+                if (isPublic != true) isPublic = false;
                 return _db.WallPosts.Where(x => x.isPublic == isPublic).ToList();
             }
-            catch (Exception e)
+            catch
             {
                 return new List<WallPost>(0);
             }
