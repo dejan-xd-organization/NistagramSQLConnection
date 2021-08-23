@@ -1,7 +1,9 @@
-﻿using NistagramSQLConnection.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NistagramSQLConnection.Data;
 using NistagramSQLConnection.Model;
 using NistagramSQLConnection.Service.Interface;
 using Scrypt;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,8 +55,15 @@ namespace NistagramSQLConnection.Service
 
         public bool RegistrationUser(User user)
         {
-            User newUser = new User(user.firstName, user.lastName, user.username, user.email, user.sex, user.dateOfBirth,
-                                    user.dateOfRegistration);
+            User newUser = new User();
+            newUser.firstName = user.firstName;
+            newUser.lastName = user.lastName;
+            newUser.username = user.username;
+            newUser.email = user.email;
+            newUser.sex = user.sex;
+            newUser.dateOfBirth = user.dateOfBirth;
+            newUser.dateOfRegistration = user.dateOfRegistration;
+
             newUser.password = encoder.Encode(user.password);
             try
             {
@@ -112,5 +121,60 @@ namespace NistagramSQLConnection.Service
             return _db.Users.OrderBy(i => i.username).ToList();
         }
 
+        public bool AddNewFollower(long myId, long followerId)
+        {
+            UserFollower uf = _db.UserFollowers.FirstOrDefault(x => x.userId == myId && x.follower.user.id == followerId);
+
+            if (uf == null)
+            {
+                User user = _db.Users.FirstOrDefault(x => x.id == followerId);
+                if (user == null)
+                {
+                    return false;
+                }
+
+                User myself = _db.Users.Where(x => x.id == myId).Include(uf => uf.userFollowers).FirstOrDefault();
+
+                Follower newFollower = new Follower();
+                newFollower.dateOfFollowing = DateTime.Now;
+                newFollower.user = user;
+                _db.Followers.Add(newFollower);
+                _db.SaveChanges();
+
+                UserFollower newUf = new UserFollower();
+                newUf.user = myself;
+                newUf.userId = myself.id;
+                newUf.follower = newFollower;
+                newUf.followerId = newFollower.user.id;
+                _db.SaveChanges();
+
+                myself.userFollowers.Add(newUf);
+                _db.SaveChanges();
+
+                return true;
+            }
+            else
+            {
+                uf.follower.dateOfFollowing = DateTime.Now;
+                _db.SaveChanges();
+                return true;
+
+            }
+        }
+
+        public List<User> GetNewFollowers(string id)
+        {
+            List<UserFollower> userFollowers = _db.UserFollowers
+                .Where(x => x.userId == long.Parse(id))
+                .Include(uf => uf.follower)
+                .ToList();
+
+            List<User> user = new List<User>();
+            foreach(UserFollower uf in userFollowers)
+            {
+                user.Add(uf.follower.user);
+            }
+            return user;
+        }
     }
 }

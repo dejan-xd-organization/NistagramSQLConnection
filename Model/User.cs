@@ -47,20 +47,11 @@ namespace NistagramSQLConnection.Model
         [ForeignKey("userId")]
         public virtual ICollection<UserPost> userPosts { get; set; }
 
+        [ForeignKey("userId")]
+        public virtual ICollection<UserFollower> userFollowers { get; set; }
 
-        public User() { }
-
-        public User(string firstName, string lastName, string username, string email, string sex, DateTime? dateOfBirth, DateTime dateOfRegistration)
-        {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.username = username;
-            this.email = email;
-            this.sex = sex;
-            this.dateOfBirth = dateOfBirth;
-            this.dateOfRegistration = dateOfRegistration;
-
-        }
+        [ForeignKey("userId")]
+        public virtual ICollection<UserFollowing> userFollowings { get; set; }
 
     }
 }

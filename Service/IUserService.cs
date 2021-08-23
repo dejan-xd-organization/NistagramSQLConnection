@@ -11,5 +11,7 @@ namespace NistagramSQLConnection.Service.Interface
         List<User> FilterUser(string filter);
         List<User> FindNewUsers();
         User FindUserById(long id, bool isOnline);
+        bool AddNewFollower(long myId, long followerId);
+        List<User> GetNewFollowers(string id);
     }
 }

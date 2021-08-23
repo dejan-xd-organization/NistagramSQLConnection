@@ -12,6 +12,9 @@ namespace NistagramSQLConnection.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<WallPost> WallPosts { get; set; }
+        public DbSet<Follower> Followers { get; set; }
+        public DbSet<UserFollower> UserFollowers { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
@@ -31,6 +34,12 @@ namespace NistagramSQLConnection.Data
 
             modelBuilder.Entity<PostReaction>()
                 .HasKey(pr => new { pr.postId, pr.reactionId });
+
+            modelBuilder.Entity<UserFollower>()
+                .HasKey(uf => new { uf.userId, uf.followerId });
+
+            modelBuilder.Entity<UserFollowing>()
+                .HasKey(uf => new { uf.userId, uf.followerId });
 
             base.OnModelCreating(modelBuilder);
         }
