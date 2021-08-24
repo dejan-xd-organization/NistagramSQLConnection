@@ -106,8 +106,8 @@ namespace NistagramSQLConnection.Service
         {
             try
             {
-                if (isOnline != true) isOnline = false;
-                return (User)_db.Users.Where(x => x.isPublicProfile == isOnline).Where(x => x.id == id);
+                User user = _db.Users.Where(x => x.isPublicProfile == isOnline).Where(x => x.id == id).FirstOrDefault();
+                return user;
             }
             catch
             {
@@ -170,7 +170,7 @@ namespace NistagramSQLConnection.Service
                 .ToList();
 
             List<User> user = new List<User>();
-            foreach(UserFollower uf in userFollowers)
+            foreach (UserFollower uf in userFollowers)
             {
                 user.Add(uf.follower.user);
             }

@@ -7,5 +7,6 @@ namespace NistagramSQLConnection.Service.Interface
     {
 
         List<WallPost> GetAllWallPosts(bool isPublic);
+        List<Reaction> GetAllReactions(List<long> id);
     }
 }
