@@ -6,6 +6,6 @@
         public User user { get; set; }
 
         public long followerId { get; set; }
-        public Follower follower { get; set; }
+        public Following following { get; set; }
     }
 }

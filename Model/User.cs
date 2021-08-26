@@ -44,14 +44,11 @@ namespace NistagramSQLConnection.Model
         [ForeignKey("roleId")]
         public Role role { get; set; }
 
-        [ForeignKey("userId")]
-        public virtual ICollection<UserPost> userPosts { get; set; }
+        public ICollection<UserPost> userPosts { get; set; }
 
-        [ForeignKey("userId")]
-        public virtual ICollection<UserFollower> userFollowers { get; set; }
+        public ICollection<UserFollower> userFollowers { get; set; }
 
-        [ForeignKey("userId")]
-        public virtual ICollection<UserFollowing> userFollowings { get; set; }
+        public ICollection<UserFollowing> userFollowings { get; set; }
 
     }
 }

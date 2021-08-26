@@ -20,13 +20,10 @@ namespace NistagramSQLConnection.Model
 
         public bool isPublic { get; set; }  // is wall post public or not?
 
-        [ForeignKey("postId")]
-        public virtual ICollection<UserPost> userPosts { get; set; }
+        public ICollection<UserPost> userPosts { get; set; }
 
-        [ForeignKey("postId")]
-        public virtual ICollection<PostReaction> postReactions { get; set; }
+        public ICollection<PostReaction> postReactions { get; set; }
 
-        [ForeignKey("postId")]
-        public virtual ICollection<PostComment> postComments { get; set; }
+        public ICollection<PostComment> postComments { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 namespace NistagramSQLConnection.Migrations
 {
@@ -145,15 +145,36 @@ namespace NistagramSQLConnection.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     dateOfFollowing = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    userid = table.Column<long>(type: "bigint", nullable: true),
+                    userId = table.Column<long>(type: "bigint", nullable: true),
                     accepted = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_follower", x => x.id);
                     table.ForeignKey(
-                        name: "FK_follower_user_userid",
-                        column: x => x.userid,
+                        name: "FK_follower_user_userId",
+                        column: x => x.userId,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "following",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    dateOfFollowing = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    userId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_following", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_following_user_userId",
+                        column: x => x.userId,
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
@@ -182,7 +203,7 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "UserPost",
+                name: "UserPosts",
                 columns: table => new
                 {
                     userId = table.Column<long>(type: "bigint", nullable: false),
@@ -190,15 +211,15 @@ namespace NistagramSQLConnection.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPost", x => new { x.postId, x.userId });
+                    table.PrimaryKey("PK_UserPosts", x => new { x.postId, x.userId });
                     table.ForeignKey(
-                        name: "FK_UserPost_user_userId",
+                        name: "FK_UserPosts_user_userId",
                         column: x => x.userId,
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserPost_wallpost_postId",
+                        name: "FK_UserPosts_wallpost_postId",
                         column: x => x.postId,
                         principalTable: "wallpost",
                         principalColumn: "id",
@@ -207,7 +228,7 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "PostComment",
+                name: "PostComments",
                 columns: table => new
                 {
                     postId = table.Column<long>(type: "bigint", nullable: false),
@@ -215,15 +236,15 @@ namespace NistagramSQLConnection.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostComment", x => new { x.postId, x.commentId });
+                    table.PrimaryKey("PK_PostComments", x => new { x.postId, x.commentId });
                     table.ForeignKey(
-                        name: "FK_PostComment_comment_commentId",
+                        name: "FK_PostComments_comment_commentId",
                         column: x => x.commentId,
                         principalTable: "comment",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostComment_wallpost_postId",
+                        name: "FK_PostComments_wallpost_postId",
                         column: x => x.postId,
                         principalTable: "wallpost",
                         principalColumn: "id",
@@ -257,7 +278,7 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "UserFollowing",
+                name: "UserFollowings",
                 columns: table => new
                 {
                     userId = table.Column<long>(type: "bigint", nullable: false),
@@ -265,15 +286,15 @@ namespace NistagramSQLConnection.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFollowing", x => new { x.userId, x.followerId });
+                    table.PrimaryKey("PK_UserFollowings", x => new { x.userId, x.followerId });
                     table.ForeignKey(
-                        name: "FK_UserFollowing_follower_followerId",
+                        name: "FK_UserFollowings_following_followerId",
                         column: x => x.followerId,
-                        principalTable: "follower",
+                        principalTable: "following",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserFollowing_user_userId",
+                        name: "FK_UserFollowings_user_userId",
                         column: x => x.userId,
                         principalTable: "user",
                         principalColumn: "id",
@@ -282,7 +303,7 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "PostReaction",
+                name: "PostReactions",
                 columns: table => new
                 {
                     postId = table.Column<long>(type: "bigint", nullable: false),
@@ -290,15 +311,15 @@ namespace NistagramSQLConnection.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostReaction", x => new { x.postId, x.reactionId });
+                    table.PrimaryKey("PK_PostReactions", x => new { x.postId, x.reactionId });
                     table.ForeignKey(
-                        name: "FK_PostReaction_reaction_reactionId",
+                        name: "FK_PostReactions_reaction_reactionId",
                         column: x => x.reactionId,
                         principalTable: "reaction",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostReaction_wallpost_postId",
+                        name: "FK_PostReactions_wallpost_postId",
                         column: x => x.postId,
                         principalTable: "wallpost",
                         principalColumn: "id",
@@ -312,18 +333,23 @@ namespace NistagramSQLConnection.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_follower_userid",
+                name: "IX_follower_userId",
                 table: "follower",
-                column: "userid");
+                column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostComment_commentId",
-                table: "PostComment",
+                name: "IX_following_userId",
+                table: "following",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostComments_commentId",
+                table: "PostComments",
                 column: "commentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostReaction_reactionId",
-                table: "PostReaction",
+                name: "IX_PostReactions_reactionId",
+                table: "PostReactions",
                 column: "reactionId");
 
             migrationBuilder.CreateIndex(
@@ -353,32 +379,32 @@ namespace NistagramSQLConnection.Migrations
                 column: "followerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFollowing_followerId",
-                table: "UserFollowing",
+                name: "IX_UserFollowings_followerId",
+                table: "UserFollowings",
                 column: "followerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPost_userId",
-                table: "UserPost",
+                name: "IX_UserPosts_userId",
+                table: "UserPosts",
                 column: "userId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PostComment");
+                name: "PostComments");
 
             migrationBuilder.DropTable(
-                name: "PostReaction");
+                name: "PostReactions");
 
             migrationBuilder.DropTable(
                 name: "UserFollowers");
 
             migrationBuilder.DropTable(
-                name: "UserFollowing");
+                name: "UserFollowings");
 
             migrationBuilder.DropTable(
-                name: "UserPost");
+                name: "UserPosts");
 
             migrationBuilder.DropTable(
                 name: "comment");
@@ -388,6 +414,9 @@ namespace NistagramSQLConnection.Migrations
 
             migrationBuilder.DropTable(
                 name: "follower");
+
+            migrationBuilder.DropTable(
+                name: "following");
 
             migrationBuilder.DropTable(
                 name: "wallpost");

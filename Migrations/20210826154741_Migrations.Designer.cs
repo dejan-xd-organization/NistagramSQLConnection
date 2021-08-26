@@ -9,7 +9,7 @@ using NistagramSQLConnection.Data;
 namespace NistagramSQLConnection.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210823193217_Migrations")]
+    [Migration("20210826154741_Migrations")]
     partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,14 +82,33 @@ namespace NistagramSQLConnection.Migrations
                     b.Property<DateTime>("dateOfFollowing")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<long?>("userid")
+                    b.Property<long?>("userId")
                         .HasColumnType("bigint");
 
                     b.HasKey("id");
 
-                    b.HasIndex("userid");
+                    b.HasIndex("userId");
 
                     b.ToTable("follower");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Following", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("dateOfFollowing")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("userId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("following");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.PostComment", b =>
@@ -104,7 +123,7 @@ namespace NistagramSQLConnection.Migrations
 
                     b.HasIndex("commentId");
 
-                    b.ToTable("PostComment");
+                    b.ToTable("PostComments");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.PostReaction", b =>
@@ -119,7 +138,7 @@ namespace NistagramSQLConnection.Migrations
 
                     b.HasIndex("reactionId");
 
-                    b.ToTable("PostReaction");
+                    b.ToTable("PostReactions");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.Reaction", b =>
@@ -244,7 +263,7 @@ namespace NistagramSQLConnection.Migrations
 
                     b.HasIndex("followerId");
 
-                    b.ToTable("UserFollowing");
+                    b.ToTable("UserFollowings");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.UserPost", b =>
@@ -259,7 +278,7 @@ namespace NistagramSQLConnection.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("UserPost");
+                    b.ToTable("UserPosts");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.WallPost", b =>
@@ -298,7 +317,16 @@ namespace NistagramSQLConnection.Migrations
                 {
                     b.HasOne("NistagramSQLConnection.Model.User", "user")
                         .WithMany()
-                        .HasForeignKey("userid");
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Following", b =>
+                {
+                    b.HasOne("NistagramSQLConnection.Model.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
 
                     b.Navigation("user");
                 });
@@ -368,7 +396,7 @@ namespace NistagramSQLConnection.Migrations
             modelBuilder.Entity("NistagramSQLConnection.Model.UserFollower", b =>
                 {
                     b.HasOne("NistagramSQLConnection.Model.Follower", "follower")
-                        .WithMany()
+                        .WithMany("userFollowers")
                         .HasForeignKey("followerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -386,8 +414,8 @@ namespace NistagramSQLConnection.Migrations
 
             modelBuilder.Entity("NistagramSQLConnection.Model.UserFollowing", b =>
                 {
-                    b.HasOne("NistagramSQLConnection.Model.Follower", "follower")
-                        .WithMany()
+                    b.HasOne("NistagramSQLConnection.Model.Following", "following")
+                        .WithMany("userFollowings")
                         .HasForeignKey("followerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -398,7 +426,7 @@ namespace NistagramSQLConnection.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("follower");
+                    b.Navigation("following");
 
                     b.Navigation("user");
                 });
@@ -425,6 +453,16 @@ namespace NistagramSQLConnection.Migrations
             modelBuilder.Entity("NistagramSQLConnection.Model.Comment", b =>
                 {
                     b.Navigation("postComments");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Follower", b =>
+                {
+                    b.Navigation("userFollowers");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Following", b =>
+                {
+                    b.Navigation("userFollowings");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.Reaction", b =>

@@ -42,7 +42,12 @@ namespace NistagramSQLConnection.Service
 
             try
             {
-                User user = _db.Users.SingleOrDefault(x => x.username == username);
+                User user = _db.Users
+                    .Where(x => x.username == username)
+                    .Include(x => x.userFollowers)
+                    .Include(x => x.userFollowings)
+                    .SingleOrDefault();
+
                 if (user == null) return null;
                 if (!encoder.Compare(password, user.password)) return null;
                 return user;
@@ -106,7 +111,11 @@ namespace NistagramSQLConnection.Service
         {
             try
             {
-                User user = _db.Users.Where(x => x.isPublicProfile == isOnline).Where(x => x.id == id).FirstOrDefault();
+                User user = _db.Users
+                    .Where(x => x.isPublicProfile == isOnline)
+                    .Where(x => x.id == id)
+                    .FirstOrDefault();
+
                 return user;
             }
             catch
@@ -162,19 +171,51 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public List<User> GetNewFollowers(string id)
+        public List<UserFollower> GetFollowers(string idUser, int page, int limit, bool type)
         {
-            List<UserFollower> userFollowers = _db.UserFollowers
-                .Where(x => x.userId == long.Parse(id))
-                .Include(uf => uf.follower)
-                .ToList();
+            if (page == 0) page = 1;
+            if (limit == 0) limit = 20;
+            var skip = (page - 1) * limit;
 
-            List<User> user = new List<User>();
-            foreach (UserFollower uf in userFollowers)
+            try
             {
-                user.Add(uf.follower.user);
+                List<UserFollower> user = _db.UserFollowers
+                    .Where(x => x.userId == long.Parse(idUser) && x.follower.accepted == type)
+                    .Skip(skip)
+                    .Take(limit)
+                    .Include(x => x.follower.user)
+                    .ToList();
+
+                return user;
             }
-            return user;
+            catch
+            {
+                return new List<UserFollower>(0);
+            }
+
+        }
+
+        public List<UserFollowing> GetNewFollowings(string idUser, int page, int limit)
+        {
+            if (page == 0) page = 1;
+            if (limit == 0) limit = 20;
+            var skip = (page - 1) * limit;
+
+            try
+            {
+                List<UserFollowing> user = _db.UserFollowings
+                    .Where(x => x.userId == long.Parse(idUser))
+                    .Skip(skip)
+                    .Take(limit)
+                    .Include(x => x.following.user)
+                    .ToList();
+
+                return user;
+            }
+            catch
+            {
+                return new List<UserFollowing>(0);
+            }
         }
     }
 }
