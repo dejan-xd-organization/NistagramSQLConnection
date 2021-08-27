@@ -1,5 +1,5 @@
-﻿using NistagramSQLConnection.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NistagramSQLConnection.Model;
 
 namespace NistagramSQLConnection.Service.Interface
 {
