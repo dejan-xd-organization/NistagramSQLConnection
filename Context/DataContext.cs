@@ -12,6 +12,14 @@ namespace NistagramSQLConnection.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<WallPost> WallPosts { get; set; }
+        public DbSet<Follower> Followers { get; set; }
+        public DbSet<Following> Followings { get; set; }
+        public DbSet<UserFollower> UserFollowers { get; set; }
+        public DbSet<UserFollowing> UserFollowings { get; set; }
+        public DbSet<UserPost> UserPosts { get; set; }
+        public DbSet<PostComment> PostComments { get; set; }
+        public DbSet<PostReaction> PostReactions { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
@@ -31,6 +39,59 @@ namespace NistagramSQLConnection.Data
 
             modelBuilder.Entity<PostReaction>()
                 .HasKey(pr => new { pr.postId, pr.reactionId });
+
+            modelBuilder.Entity<UserFollower>()
+                .HasKey(uf => new { uf.userId, uf.followerId });
+
+            modelBuilder.Entity<UserFollowing>()
+                .HasKey(uf => new { uf.userId, uf.followerId });
+
+
+
+            modelBuilder.Entity<UserPost>()
+                .HasOne(bc => bc.wallPost)
+                .WithMany(b => b.userPosts)
+                .HasForeignKey(bc => bc.postId);
+            modelBuilder.Entity<UserPost>()
+                .HasOne(bc => bc.user)
+                .WithMany(c => c.userPosts)
+                .HasForeignKey(bc => bc.userId);
+
+            modelBuilder.Entity<PostComment>()
+                .HasOne(bc => bc.comment)
+                .WithMany(b => b.postComments)
+                .HasForeignKey(bc => bc.commentId);
+            modelBuilder.Entity<PostComment>()
+                .HasOne(bc => bc.wallPost)
+                .WithMany(c => c.postComments)
+                .HasForeignKey(bc => bc.postId);
+
+            modelBuilder.Entity<PostReaction>()
+                .HasOne(bc => bc.reaction)
+                .WithMany(b => b.postReactions)
+                .HasForeignKey(bc => bc.reactionId);
+            modelBuilder.Entity<PostReaction>()
+                .HasOne(bc => bc.wallPost)
+                .WithMany(c => c.postReactions)
+                .HasForeignKey(bc => bc.postId);
+
+            modelBuilder.Entity<UserFollower>()
+                .HasOne(bc => bc.follower)
+                .WithMany(b => b.userFollowers)
+                .HasForeignKey(bc => bc.followerId);
+            modelBuilder.Entity<UserFollower>()
+                .HasOne(bc => bc.user)
+                .WithMany(c => c.userFollowers)
+                .HasForeignKey(bc => bc.userId);
+
+            modelBuilder.Entity<UserFollowing>()
+                .HasOne(bc => bc.following)
+                .WithMany(b => b.userFollowings)
+                .HasForeignKey(bc => bc.followerId);
+            modelBuilder.Entity<UserFollowing>()
+                .HasOne(bc => bc.user)
+                .WithMany(c => c.userFollowings)
+                .HasForeignKey(bc => bc.userId);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -19,7 +19,6 @@ namespace NistagramSQLConnection.Model
         [ForeignKey("userId")]
         public User user { get; set; }
 
-        [ForeignKey("commentId")]
-        public virtual ICollection<PostComment> postComments { get; set; }
+        public ICollection<PostComment> postComments { get; set; }
     }
 }
