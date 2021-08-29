@@ -46,6 +46,7 @@ namespace NistagramSQLConnection.Service
                     .Where(x => x.username == username)
                     .Include(x => x.userFollowers)
                     .Include(x => x.userFollowings)
+                    .Include(x => x.address)
                     .SingleOrDefault();
 
                 if (user == null) return null;
@@ -215,6 +216,65 @@ namespace NistagramSQLConnection.Service
             catch
             {
                 return new List<UserFollowing>(0);
+            }
+        }
+
+        public User UpdateUser(User user)
+        {
+            try
+            {
+                Address address = _db.Addresses.FirstOrDefault(x => x.id == user.address.id);
+                address.city = user.address.city;
+                address.country = user.address.country;
+                _db.SaveChanges();
+
+                User u = _db.Users
+                    .Where(x => x.id == user.id)
+                    .Include(x => x.address)
+                    .FirstOrDefault();
+
+                u.firstName = user.firstName;
+                u.lastName = user.lastName;
+                u.username = user.username;
+                u.email = user.email;
+                u.sex = user.sex;
+                u.isPublicProfile = user.isPublicProfile;
+                u.relationship = user.relationship;
+                u.dateOfBirth = user.dateOfBirth;
+                _db.SaveChanges();
+
+                return u;
+            }
+            catch
+            {
+                return new User();
+            }
+        }
+
+        public bool ChangePassword(long id, string oldPassword, string newPasswor)
+        {
+            try
+            {
+                User u = _db.Users
+                    .Where(x => x.id == id)
+                    .FirstOrDefault();
+
+                var oldPasswordEnc = encoder.Encode(oldPassword);
+                bool areEquals = encoder.Compare(oldPassword, u.password);
+
+                if (u != null && areEquals)
+                {
+                    u.password = encoder.Encode(newPasswor);
+                    _db.SaveChanges();
+
+                    return true;
+
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
