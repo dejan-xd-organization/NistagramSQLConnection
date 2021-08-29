@@ -14,5 +14,8 @@ namespace NistagramSQLConnection.Service.Interface
         bool AddNewFollower(long myId, long followerId);
         List<UserFollower> GetFollowers(string id, int page, int limit, bool type);
         List<UserFollowing> GetNewFollowings(string idUser, int page, int limit);
+        //bool UpdateUser(UpdateUser updateUserDto);
+        User UpdateUser(User user);
+        bool ChangePassword(long id, string oldPassword, string newPassword);
     }
 }
