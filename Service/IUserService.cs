@@ -12,9 +12,10 @@ namespace NistagramSQLConnection.Service.Interface
         List<User> FindNewUsers();
         User FindUserById(long id, bool isOnline);
         bool AddNewFollower(long myId, long followerId);
-        List<UserFollower> GetFollowers(string id, int page, int limit, bool type);
-        List<UserFollowing> GetNewFollowings(string idUser, int page, int limit);
-        //bool UpdateUser(UpdateUser updateUserDto);
+        List<UserFollower> GetMyFollowers(string idUser, int page, int limit, bool accepted);
+        List<UserFollowing> GetMyFollowing(string idUser, int page, int limit);
+        List<UserFollower> GetNewFollowers(string idUser);
+        List<UserFollowing> GetNewFollowings(string idUser);
         User UpdateUser(User user);
         bool ChangePassword(long id, string oldPassword, string newPassword);
     }

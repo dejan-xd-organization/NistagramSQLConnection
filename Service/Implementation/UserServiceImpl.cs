@@ -172,7 +172,7 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public List<UserFollower> GetFollowers(string idUser, int page, int limit, bool type)
+        public List<UserFollower> GetMyFollowers(string idUser, int page, int limit, bool accepted)
         {
             if (page == 0) page = 1;
             if (limit == 0) limit = 20;
@@ -181,7 +181,7 @@ namespace NistagramSQLConnection.Service
             try
             {
                 List<UserFollower> user = _db.UserFollowers
-                    .Where(x => x.userId == long.Parse(idUser) && x.follower.accepted == type)
+                    .Where(x => x.userId == long.Parse(idUser) && x.follower.accepted == accepted)
                     .Skip(skip)
                     .Take(limit)
                     .Include(x => x.follower.user)
@@ -196,7 +196,7 @@ namespace NistagramSQLConnection.Service
 
         }
 
-        public List<UserFollowing> GetNewFollowings(string idUser, int page, int limit)
+        public List<UserFollowing> GetMyFollowing(string idUser, int page, int limit)
         {
             if (page == 0) page = 1;
             if (limit == 0) limit = 20;
@@ -208,6 +208,54 @@ namespace NistagramSQLConnection.Service
                     .Where(x => x.userId == long.Parse(idUser))
                     .Skip(skip)
                     .Take(limit)
+                    .Include(x => x.following.user)
+                    .ToList();
+
+                return user;
+            }
+            catch
+            {
+                return new List<UserFollowing>(0);
+            }
+        }
+
+        public List<UserFollower> GetNewFollowers(string idUser)
+        {
+            //if (page == 0) page = 1;
+            //if (limit == 0) limit = 20;
+            //var skip = (page - 1) * limit;
+
+            try
+            {
+                List<UserFollower> user = _db.UserFollowers
+                    .Where(x => x.userId == long.Parse(idUser))
+                    .OrderByDescending(x => x.follower.dateOfFollowing)
+                    //.Skip(skip)
+                    .Take(5)
+                    .Include(x => x.follower.user)
+                    .ToList();
+
+                return user;
+            }
+            catch
+            {
+                return new List<UserFollower>(0);
+            }
+        }
+
+        public List<UserFollowing> GetNewFollowings(string idUser)
+        {
+            //if (page == 0) page = 1;
+            //if (limit == 0) limit = 20;
+            //var skip = (page - 1) * limit;
+
+            try
+            {
+                List<UserFollowing> user = _db.UserFollowings
+                    .Where(x => x.userId == long.Parse(idUser))
+                    .OrderByDescending(x => x.following.dateOfFollowing)
+                    //.Skip(skip)
+                    .Take(5)
                     .Include(x => x.following.user)
                     .ToList();
 
