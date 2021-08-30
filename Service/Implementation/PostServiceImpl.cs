@@ -43,6 +43,29 @@ namespace NistagramSQLConnection.Service
             }
         }
 
+        public List<UserPost> GetMyWallPosts(long id, int page, int limit)
+        {
+            if (page == 0) page = 1;
+            if (limit == 0) limit = 20;
+            var skip = (page - 1) * limit;
+
+            try
+            {
+                return _db.UserPosts
+                    .Where(x => x.userId == id)
+                    .OrderByDescending(x => x.wallPost.timePublis)
+                    .Skip(skip)
+                    .Take(limit)
+                    .Include(x => x.user)
+                    .Include(x => x.wallPost).ThenInclude(x => (x as WallPost).postReactions).ThenInclude(x => (x as PostReaction).reaction)
+                    .ToList();
+            }
+            catch
+            {
+                return new List<UserPost>(0);
+            }
+        }
+
         public WallPost NewPost(long userId, string description, string imgLink, bool isPublic)
         {
             User user = _db.Users
