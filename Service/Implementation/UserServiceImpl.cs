@@ -272,9 +272,12 @@ namespace NistagramSQLConnection.Service
             try
             {
                 Address address = _db.Addresses.FirstOrDefault(x => x.id == user.address.id);
-                address.city = user.address.city;
-                address.country = user.address.country;
-                _db.SaveChanges();
+                if (address != null)
+                {
+                    address.city = user.address.city;
+                    address.country = user.address.country;
+                    _db.SaveChanges();
+                }
 
                 User u = _db.Users
                     .Where(x => x.id == user.id)

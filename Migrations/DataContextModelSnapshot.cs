@@ -46,6 +46,42 @@ namespace NistagramSQLConnection.Migrations
                     b.ToTable("address");
                 });
 
+            modelBuilder.Entity("NistagramSQLConnection.Model.ChatBox", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("meid")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("youid")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("meid");
+
+                    b.HasIndex("youid");
+
+                    b.ToTable("chatbox");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.ChatBoxMessages", b =>
+                {
+                    b.Property<long>("chatBoxId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("messageId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("chatBoxId", "messageId");
+
+                    b.HasIndex("messageId");
+
+                    b.ToTable("ChatBoxMessages");
+                });
+
             modelBuilder.Entity("NistagramSQLConnection.Model.Comment", b =>
                 {
                     b.Property<long>("id")
@@ -107,6 +143,25 @@ namespace NistagramSQLConnection.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("following");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Message", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("text")
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("userId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("message");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.PostComment", b =>
@@ -302,6 +357,40 @@ namespace NistagramSQLConnection.Migrations
                     b.ToTable("wallpost");
                 });
 
+            modelBuilder.Entity("NistagramSQLConnection.Model.ChatBox", b =>
+                {
+                    b.HasOne("NistagramSQLConnection.Model.User", "me")
+                        .WithMany()
+                        .HasForeignKey("meid");
+
+                    b.HasOne("NistagramSQLConnection.Model.User", "you")
+                        .WithMany()
+                        .HasForeignKey("youid");
+
+                    b.Navigation("me");
+
+                    b.Navigation("you");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.ChatBoxMessages", b =>
+                {
+                    b.HasOne("NistagramSQLConnection.Model.ChatBox", "chatBox")
+                        .WithMany("chatBoxMessages")
+                        .HasForeignKey("chatBoxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NistagramSQLConnection.Model.Message", "message")
+                        .WithMany("chatBoxMessages")
+                        .HasForeignKey("messageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("chatBox");
+
+                    b.Navigation("message");
+                });
+
             modelBuilder.Entity("NistagramSQLConnection.Model.Comment", b =>
                 {
                     b.HasOne("NistagramSQLConnection.Model.User", "user")
@@ -321,6 +410,15 @@ namespace NistagramSQLConnection.Migrations
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.Following", b =>
+                {
+                    b.HasOne("NistagramSQLConnection.Model.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Message", b =>
                 {
                     b.HasOne("NistagramSQLConnection.Model.User", "user")
                         .WithMany()
@@ -448,6 +546,11 @@ namespace NistagramSQLConnection.Migrations
                     b.Navigation("wallPost");
                 });
 
+            modelBuilder.Entity("NistagramSQLConnection.Model.ChatBox", b =>
+                {
+                    b.Navigation("chatBoxMessages");
+                });
+
             modelBuilder.Entity("NistagramSQLConnection.Model.Comment", b =>
                 {
                     b.Navigation("postComments");
@@ -461,6 +564,11 @@ namespace NistagramSQLConnection.Migrations
             modelBuilder.Entity("NistagramSQLConnection.Model.Following", b =>
                 {
                     b.Navigation("userFollowings");
+                });
+
+            modelBuilder.Entity("NistagramSQLConnection.Model.Message", b =>
+                {
+                    b.Navigation("chatBoxMessages");
                 });
 
             modelBuilder.Entity("NistagramSQLConnection.Model.Reaction", b =>
