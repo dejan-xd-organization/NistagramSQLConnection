@@ -221,10 +221,6 @@ namespace NistagramSQLConnection.Service
 
         public List<UserFollower> GetNewFollowers(string idUser)
         {
-            //if (page == 0) page = 1;
-            //if (limit == 0) limit = 20;
-            //var skip = (page - 1) * limit;
-
             try
             {
                 List<UserFollower> user = _db.UserFollowers
@@ -245,9 +241,6 @@ namespace NistagramSQLConnection.Service
 
         public List<UserFollowing> GetNewFollowings(string idUser)
         {
-            //if (page == 0) page = 1;
-            //if (limit == 0) limit = 20;
-            //var skip = (page - 1) * limit;
 
             try
             {
@@ -299,7 +292,7 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public bool ChangePassword(long id, string oldPassword, string newPasswor)
+        public bool ChangePassword(long id, string oldPassword, string newPassword)
         {
             try
             {
@@ -307,12 +300,11 @@ namespace NistagramSQLConnection.Service
                     .Where(x => x.id == id)
                     .FirstOrDefault();
 
-                var oldPasswordEnc = encoder.Encode(oldPassword);
                 bool areEquals = encoder.Compare(oldPassword, u.password);
 
-                if (u != null && areEquals)
+                if (areEquals)
                 {
-                    u.password = encoder.Encode(newPasswor);
+                    u.password = encoder.Encode(newPassword);
                     _db.SaveChanges();
 
                     return true;
