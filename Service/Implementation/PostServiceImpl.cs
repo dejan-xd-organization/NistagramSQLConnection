@@ -57,7 +57,7 @@ namespace NistagramSQLConnection.Service
                     .Skip(skip)
                     .Take(limit)
                     .Include(x => x.user)
-                    .Include(x => x.wallPost).ThenInclude(x => (x as WallPost).postReactions).ThenInclude(x => (x as PostReaction).reaction)
+                    .Include(x => x.wallPost).ThenInclude(x => x.postReactions).ThenInclude(x => (x as PostReaction).reaction)
                     .ToList();
             }
             catch
