@@ -1,20 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NistagramSQLConnection.Model
 {
-    [Table("reaction")]
-    public class Reaction
+    [Table("following")]
+    public class Following
     {
         [Key]
         public long id { get; set; }
 
-        public bool? type { get; set; }
+        public DateTime dateOfFollowing { get; set; }
 
         [ForeignKey("userId")]
         public User user { get; set; }
 
-        public ICollection<PostReaction> postReactions { get; set; }
+        public ICollection<UserFollowing> userFollowings { get; set; }
+
     }
 }

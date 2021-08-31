@@ -44,23 +44,11 @@ namespace NistagramSQLConnection.Model
         [ForeignKey("roleId")]
         public Role role { get; set; }
 
-        [ForeignKey("userId")]
-        public virtual ICollection<UserPost> userPosts { get; set; }
+        public ICollection<UserPost> userPosts { get; set; }
 
+        public ICollection<UserFollower> userFollowers { get; set; }
 
-        public User() { }
-
-        public User(string firstName, string lastName, string username, string email, string sex, DateTime? dateOfBirth, DateTime dateOfRegistration)
-        {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.username = username;
-            this.email = email;
-            this.sex = sex;
-            this.dateOfBirth = dateOfBirth;
-            this.dateOfRegistration = dateOfRegistration;
-
-        }
+        public ICollection<UserFollowing> userFollowings { get; set; }
 
     }
 }
