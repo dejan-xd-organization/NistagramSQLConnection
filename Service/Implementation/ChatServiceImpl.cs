@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NistagramSQLConnection.Data;
 using NistagramSQLConnection.Model;
@@ -22,7 +19,7 @@ namespace NistagramSQLConnection.Service.Implementation
         {
             ChatBox cBox = _db.ChatBoxes
                 .Where(x => x.me.id == userId && x.you.id == friendId)
-                .Include(x => x.chatBoxMessages).ThenInclude(x => (x as ChatBoxMessages).message).ThenInclude(x=> x.user)
+                .Include(x => x.chatBoxMessages).ThenInclude(x => (x as ChatBoxMessages).message).ThenInclude(x => x.user)
                 .FirstOrDefault();
 
             List<Message> messages = cBox?.chatBoxMessages?.Select(x => x.message).ToList();
@@ -33,7 +30,7 @@ namespace NistagramSQLConnection.Service.Implementation
 
         public Message SendMessage(string text, long friendId, long userId)
         {
-            User user = _db.Users.FirstOrDefault(x=>x.id == userId);
+            User user = _db.Users.FirstOrDefault(x => x.id == userId);
 
             Message message = new Message();
 
