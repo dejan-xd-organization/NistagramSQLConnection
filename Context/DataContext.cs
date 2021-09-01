@@ -19,6 +19,9 @@ namespace NistagramSQLConnection.Data
         public DbSet<UserPost> UserPosts { get; set; }
         public DbSet<PostComment> PostComments { get; set; }
         public DbSet<PostReaction> PostReactions { get; set; }
+        public DbSet<ChatBoxMessages> ChatBoxMessages { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatBox> ChatBoxes { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -45,6 +48,9 @@ namespace NistagramSQLConnection.Data
 
             modelBuilder.Entity<UserFollowing>()
                 .HasKey(uf => new { uf.userId, uf.followerId });
+
+            modelBuilder.Entity<ChatBoxMessages>()
+                .HasKey(cm => new { cm.chatBoxId, cm.messageId });
 
 
 
@@ -92,6 +98,11 @@ namespace NistagramSQLConnection.Data
                 .HasOne(bc => bc.user)
                 .WithMany(c => c.userFollowings)
                 .HasForeignKey(bc => bc.userId);
+
+            modelBuilder.Entity<ChatBoxMessages>()
+                .HasOne(bc => bc.chatBox)
+                .WithMany(c => c.chatBoxMessages)
+                .HasForeignKey(bc => bc.chatBoxId);
 
             base.OnModelCreating(modelBuilder);
         }

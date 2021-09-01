@@ -116,6 +116,33 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "chatbox",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    meid = table.Column<long>(type: "bigint", nullable: true),
+                    youid = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_chatbox", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_chatbox_user_meid",
+                        column: x => x.meid,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_chatbox_user_youid",
+                        column: x => x.youid,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "comment",
                 columns: table => new
                 {
@@ -174,6 +201,28 @@ namespace NistagramSQLConnection.Migrations
                     table.PrimaryKey("PK_following", x => x.id);
                     table.ForeignKey(
                         name: "FK_following_user_userId",
+                        column: x => x.userId,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "message",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    text = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    userId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_message", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_message_user_userId",
                         column: x => x.userId,
                         principalTable: "user",
                         principalColumn: "id",
@@ -303,6 +352,31 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ChatBoxMessages",
+                columns: table => new
+                {
+                    chatBoxId = table.Column<long>(type: "bigint", nullable: false),
+                    messageId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatBoxMessages", x => new { x.chatBoxId, x.messageId });
+                    table.ForeignKey(
+                        name: "FK_ChatBoxMessages_chatbox_chatBoxId",
+                        column: x => x.chatBoxId,
+                        principalTable: "chatbox",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatBoxMessages_message_messageId",
+                        column: x => x.messageId,
+                        principalTable: "message",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "PostReactions",
                 columns: table => new
                 {
@@ -328,6 +402,21 @@ namespace NistagramSQLConnection.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_chatbox_meid",
+                table: "chatbox",
+                column: "meid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_chatbox_youid",
+                table: "chatbox",
+                column: "youid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatBoxMessages_messageId",
+                table: "ChatBoxMessages",
+                column: "messageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_comment_userId",
                 table: "comment",
                 column: "userId");
@@ -340,6 +429,11 @@ namespace NistagramSQLConnection.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_following_userId",
                 table: "following",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_message_userId",
+                table: "message",
                 column: "userId");
 
             migrationBuilder.CreateIndex(
@@ -392,6 +486,9 @@ namespace NistagramSQLConnection.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ChatBoxMessages");
+
+            migrationBuilder.DropTable(
                 name: "PostComments");
 
             migrationBuilder.DropTable(
@@ -405,6 +502,12 @@ namespace NistagramSQLConnection.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserPosts");
+
+            migrationBuilder.DropTable(
+                name: "chatbox");
+
+            migrationBuilder.DropTable(
+                name: "message");
 
             migrationBuilder.DropTable(
                 name: "comment");

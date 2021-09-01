@@ -108,13 +108,15 @@ namespace NistagramSQLConnection.Service
             }
         }
 
-        public User FindUserById(long id, bool isOnline)
+        public User FindUserById(long id, List<bool> isPublicProfile)
         {
             try
             {
                 User user = _db.Users
-                    .Where(x => x.isPublicProfile == isOnline)
                     .Where(x => x.id == id)
+                    .Include(x => x.address)
+                    .Include(x=> x.userFollowers)
+                    .Include(x=>x.userFollowings)
                     .FirstOrDefault();
 
                 return user;
@@ -133,7 +135,10 @@ namespace NistagramSQLConnection.Service
 
         public bool AddNewFollower(long myId, long followerId)
         {
-            UserFollower uf = _db.UserFollowers.FirstOrDefault(x => x.userId == myId && x.follower.user.id == followerId);
+            UserFollower uf = _db.UserFollowers
+                .Where(x => x.userId == myId && x.follower.user.id == followerId)
+                .Include(x => x.follower.user)
+                .FirstOrDefault();
 
             if (uf == null)
             {
@@ -148,6 +153,7 @@ namespace NistagramSQLConnection.Service
                 Follower newFollower = new Follower();
                 newFollower.dateOfFollowing = DateTime.Now;
                 newFollower.user = user;
+                newFollower.accepted = true;
                 _db.Followers.Add(newFollower);
                 _db.SaveChanges();
 
@@ -156,6 +162,7 @@ namespace NistagramSQLConnection.Service
                 newUf.userId = myself.id;
                 newUf.follower = newFollower;
                 newUf.followerId = newFollower.user.id;
+                _db.UserFollowers.Add(newUf);
                 _db.SaveChanges();
 
                 myself.userFollowers.Add(newUf);
@@ -170,6 +177,47 @@ namespace NistagramSQLConnection.Service
                 return true;
 
             }
+        }
+
+        public User AddFollowing(long friendId, long myId)
+        {
+            User me = _db.Users
+                .Where(x => x.id == myId)
+                .Include(x => x.userFollowings).ThenInclude(x => x.following.user)
+                .FirstOrDefault();
+
+            User friend = _db.Users
+                .Where(x => x.id == friendId)
+                .Include(x => x.userFollowers).ThenInclude(x => x.follower.user)
+                .FirstOrDefault();
+
+            bool isFind = me.userFollowings.Select(x => x.following.user.id == friendId).FirstOrDefault();
+
+            if (!isFind)
+            {
+                Following following = new Following();
+                following.user = friend;
+                following.dateOfFollowing = DateTime.Now;
+                _db.Followings.Add(following);
+                _db.SaveChanges();
+
+                UserFollowing userFollowing = new UserFollowing();
+                userFollowing.user = me;
+                userFollowing.userId = me.id;
+                userFollowing.following = following;
+                userFollowing.followerId = following.id;
+                _db.UserFollowings.Add(userFollowing);
+                _db.SaveChanges();
+
+                me.userFollowings.Add(userFollowing);
+                _db.SaveChanges();
+
+                AddNewFollower(friend.id, me.id);
+
+                return friend;
+            }
+
+            return null;
         }
 
         public List<UserFollower> GetMyFollowers(string idUser, int page, int limit, bool accepted)
@@ -265,9 +313,20 @@ namespace NistagramSQLConnection.Service
             try
             {
                 Address address = _db.Addresses.FirstOrDefault(x => x.id == user.address.id);
-                address.city = user.address.city;
-                address.country = user.address.country;
-                _db.SaveChanges();
+                if (address == null)
+                {
+                    address = new Address();
+                    address.city = user.address.city;
+                    address.country = user.address.country;
+                    _db.Addresses.Add(address);
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    address.city = user.address.city;
+                    address.country = user.address.country;
+                    _db.SaveChanges();
+                }
 
                 User u = _db.Users
                     .Where(x => x.id == user.id)
@@ -279,6 +338,7 @@ namespace NistagramSQLConnection.Service
                 u.username = user.username;
                 u.email = user.email;
                 u.sex = user.sex;
+                u.address = address;
                 u.isPublicProfile = user.isPublicProfile;
                 u.relationship = user.relationship;
                 u.dateOfBirth = user.dateOfBirth;
